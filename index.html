@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalkulator czasu pracy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <main>
+            <div class="py-5 text-center">
+                <h1>Kalkulator czasu pracy</h1>
+                <p class="lead">
+                    Czas pracy uzupełniamy jednorazowo pod koniec sprintu. Do każdego
+                    ticketu dzielimy czas proporcjonalnie pomiędzy wszystkie
+                    wyestymowany tickety w Story Points(SP) w sprincie.
+                </p>
+                <p class="lead">
+                    Szczegóły jak uzupełniać
+                    <a target="_blank"
+                        href="https://docs.google.com/document/d/1iOMc4h4R9Afw1kAx49QFYk5ESWz0Ij00MPHfFQmpVF4/edit">tutaj</a>
+                </p>
+            </div>
+            <div class="row justify-content-center py-2">
+                <h2 class="text-center">Obecny sprint</h2>
+                <div class="col-md-4 col-sm-6">
+                    <label class="form-label" for="total_sprint_sp">Suma SP w sprincie</label>
+                    <input class="form-control" type="number" id="total_sprint_sp" min="0" name="total_sprint_sp"
+                        value="40" required />
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <label class="form-label" for="worked_days">Dni przepracowane w sprincie</label>
+                    <input class="form-control" type="number" id="worked_days" min="0" name="worked_days" value="10"
+                        required />
+                </div>
+            </div>
+            <div class="row justify-content-center py-3">
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <label class="form-label" for="ticket_sp">SP zadania</label>
+                    <input class="form-control" type="number" id="ticket_sp" min="0" name="ticket_sp" value="0"
+                        required />
+                </div>
+            </div>
+            <div class="row justify-content-center py-5">
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <div class="card">
+                        <div class="card-header">Liczba godzin</div>
+                        <div class="card-body text-center fs-1">
+                            <span id="result">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <script>
+        const workHours = 8;
+        const totalSprintSPInput = document.getElementById("total_sprint_sp");
+        const workedDaysInput = document.getElementById("worked_days");
+        const ticketSPInput = document.getElementById("ticket_sp");
+        const resultElement = document.getElementById("result");
+
+        const calculateResult = () => {
+            const totalSprintSP = localStorage.getItem("totalSprintSP");
+            const workedDays = localStorage.getItem("workedDays");
+            const ticketSP = localStorage.getItem("ticketSP");
+            const result = workedDays * workHours * (ticketSP / totalSprintSP);
+            resultElement.innerHTML = Math.round(result);
+        };
+        const setLocalStorage = () => {
+            localStorage.setItem("totalSprintSP", totalSprintSPInput.value);
+            localStorage.setItem("workedDays", workedDaysInput.value);
+            localStorage.setItem("ticketSP", ticketSPInput.value);
+        };
+        window.addEventListener("DOMContentLoaded", (event) => {
+            setLocalStorage();
+            totalSprintSPInput.onchange = (event) => {
+                localStorage.setItem("totalSprintSP", event.target.value);
+                calculateResult();
+            };
+
+            workedDaysInput.onchange = (event) => {
+                localStorage.setItem("workedDays", event.target.value);
+                calculateResult();
+            };
+
+            ticketSPInput.oninput = (event) => {
+                localStorage.setItem("ticketSP", event.target.value);
+                calculateResult();
+            };
+        });
+    </script>
+</body>
+
+</html>
